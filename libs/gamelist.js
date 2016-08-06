@@ -275,7 +275,8 @@ function sendGamelist() {
 primus = new Primus(primusServer, {
     parser: 'JSON'
 });
-primus.use('rooms', Rooms);
+primus.plugin('rooms', Rooms);
+
 
 primus.on('error', function (error) {
     console.log('[Gamelist]:', error);
