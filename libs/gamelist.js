@@ -22,11 +22,10 @@ var primus,
     Primus = require('primus'),
     Rooms = require('primus-rooms'),
     primusServer = http.createServer().listen(24555),
-    duelserv = require('./duelserv.js'),
+
     domain = require('domain'),
     path = require('path'),
     ps = require('ps-node'),
-    forumValidate = require('./forum-validator.js'),
     currentGlobalMessage = '';
 
 
@@ -273,28 +272,6 @@ function sendGamelist() {
 
 
 
-function globalCall(data) {
-    forumValidate(data, function (error, info, body) {
-        if (error) {
-            console.log('[Gamelist]', error);
-            return;
-        }
-        if (info.data) {
-            if (info.success && info.data.g_access_cp === "1") {
-                announce({
-                    clientEvent: 'global',
-                    message: data.message
-                });
-                currentGlobalMessage = data.message;
-            } else {
-                console.log(data, 'asked for global', data.message);
-            }
-        } else {
-            console.log(data, 'asked for global');
-        }
-    });
-}
-
 primus = new Primus(primusServer, {
     parser: 'JSON'
 });
@@ -377,9 +354,6 @@ function onData(data, socket) {
         break;
     case ('ack'):
         acklevel++;
-        break;
-    case ('global'):
-        globalCall(data);
         break;
     case ('internalRestart'):
         if (data.password !== process.env.OPERPASS) {
