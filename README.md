@@ -6,7 +6,7 @@
 
 Emanuel, Mercury, AccessDenied, and CreaturePhil (and whoever else) need to go through Mercury’s code via voice chat. 
 
-*Mercury's NodeJS Ygopro Server.* https://github.com/mercury233/ygopro-server 
+[Mercury's NodeJS Ygopro Server](https://github.com/mercury233/ygopro-server)
 
 * Handle Memory Leaks in Mercury’s NodeJS server
 
@@ -16,20 +16,20 @@ Emanuel, Mercury, AccessDenied, and CreaturePhil (and whoever else) need to go t
 
 * Manage queues to increase capacity of server instances
 
-* Implement TrueSkill Ranking system that calculates a user’s ranking and puts them on the correct room with their opponent.
-https://github.com/freethenation/node-trueskill
+* Implement [TrueSkill](https://github.com/freethenation/node-trueskill) Ranking system that calculates a user’s ranking and puts them on the correct room with their opponent.
+
 
 *TrueSkill works the same as Elo in terms of matchmaking. Players get paired with a player who is on queue with a similar Trueskill rating. - AM*
 
 **If the queue is based on a threshold or does the queue include everyone?** (Asked by Bromantic) 
 *The way to do this is to separate players in queue rooms by their rating. For example, Room 1 contains 100 people with rating from 1000-1500, Room 2 contains 100 people with rating 1501-2000, etc. -* (**Answered by AM**)
 
-*If a Room overflows, then a new Room should be created to move players with the upper bound of that rating to that room. For example, there are 200 players in with rating of 1000-1500. Hence, take the top 100 players of that room and create a new Room. This may make Room 1 now hold 100 players with 1000-1200 and Room 2 with 1201 to 1500, further dividing the Rooms by smaller intervals of rating. - (Answered by AM)*
+*If a Room overflows, then a new Room should be created to move players with the upper bound of that rating to that room. For example, there are 200 players in with rating of 1000-1500. Hence, take the top 100 players of that room and create a new Room. This may make Room 1 now hold 100 players with 1000-1200 and Room 2 with 1201 to 1500, further dividing the Rooms by smaller intervals of rating. - (**Answered by AM**)*
 
 * Create a secure MySQL login system to handle user’s ranking records
-* Create website to show these rankings. http://ygoprorankings.ml (still needs a lot of work.) Emanuel said he can help with the website. I have another website designer who will also help. If you need the login for ygoprorankings.ml, ask Aire or cloud9p on the Discord chat.
+* [Create website to show these rankings.](http://ygoprorankings.ml) (Work in progress.) Emanuel said he can help with the website. I have another website designer who will also help. If you need the login for ygoprorankings.ml, ask Aire or cloud9p on the Discord chat.
 
-* Unify the game and the server under one language - preferably nodeJS.
+* Unify the game and the server under one language - preferably [nodeJS](https://nodejs.org/en/)
 
 ###Ranking formats
 * Include TCG with TCG Banlist, OCG with OCG Banlist, TCG/OCG with World’s Banlist for Singles/Matches and Tags.
@@ -47,11 +47,12 @@ http://yugioh.wikia.com/wiki/Simultaneous_Effects_Go_On_Chain
 https://ygorganization.com/learnrulingspart3/ 
 Since the server must have the same tcg/ocg scripts as all ygopro clients, we should not do any custom formats.
 We may think of custom card or anime formats later or it can be separate server for those who wish to create their own custom card games.
-###Ranking tags
 
-###Officially sanctioned Tag Dueling rules: 
+### Ranking Tags
 
-http://www.yugioh-card.com/en/league/dueling/tag_dueling.html 
+#### Not a current focus, but listed below are the guidelines for Tag Dueling. 
+
+[Offically sanctioned Tag Rules](http://www.yugioh-card.com/en/league/dueling/tag_dueling.html )
 
 
 ###Ranking meta
