@@ -165,21 +165,6 @@ function announce(announcement) {
 }
 
 
-function del(pid) {
-    var game;
-    for (game in gamelist) {
-        if (gamelist.hasOwnProperty(game)) {
-            if (String() + gamelist[game].pid === pid) {
-                delete gamelist[game];
-                announce(JSON.stringify(gamelist));
-            }
-        }
-    }
-    setTimeout(function () {
-        ps.kill(pid, function (error) {});
-    }, 5000);
-}
-
 function messageListener(message) {
 
     var messageListenerWatcher = domain.create();
@@ -286,28 +271,7 @@ function sendGamelist() {
     });
 }
 
-function registrationCall(data, socket) {
-    forumValidate(data, function (error, info, body) {
-        if (error) {
-            //console.log(error);
-            return;
-        }
-        if (info.success) {
-            registry[info.displayname] = socket.address.ip;
-            socket.username = data.username;
-            sendRegistry();
-            socket.write({
-                clientEvent: 'global',
-                message: currentGlobalMessage
-            });
-        } else {
-            socket.write({
-                clientEvent: 'servererror',
-                message: currentGlobalMessage
-            });
-        }
-    });
-}
+
 
 function globalCall(data) {
     forumValidate(data, function (error, info, body) {
@@ -327,69 +291,6 @@ function globalCall(data) {
             }
         } else {
             console.log(data, 'asked for global');
-        }
-    });
-}
-
-
-function genocideCall(data) {
-    forumValidate(data, function (error, info, body) {
-        if (error) {
-            return;
-        }
-        if (info.data) {
-            if (info.success && info.data.g_access_cp === "1") {
-                announce({
-                    clientEvent: 'genocide',
-                    message: data.message
-                });
-            } else {
-                console.log(data, 'asked for genocide');
-            }
-        } else {
-            console.log(data, 'asked for genocide');
-        }
-    });
-}
-
-function murderCall(data) {
-    forumValidate(data, function (error, info, body) {
-        if (error) {
-            return;
-        }
-        if (info.data) {
-            if (info.success && info.data.g_access_cp === "1") {
-                announce({
-                    clientEvent: 'kill',
-                    target: data.target
-                });
-            } else {
-                console.log(data, 'asked for murder');
-            }
-        } else {
-            console.log(data, 'asked for murder');
-        }
-
-    });
-}
-
-function killgameCall(data) {
-    forumValidate(data, function (error, info, body) {
-        if (error) {
-            return;
-        }
-        if (info.data) {
-            if (info.success && info.data.g_access_cp === "1") {
-                ps.kill(data.killTarget, function (err) {
-                    if (err) {
-                        del(data.killTarget);
-                    }
-                });
-            } else {
-                console.log(data, 'tried to kill');
-            }
-        } else {
-            console.log(data, 'tried to kill');
         }
     });
 }
@@ -477,17 +378,8 @@ function onData(data, socket) {
     case ('ack'):
         acklevel++;
         break;
-    case ('register'):
-        registrationCall(data, socket);
-        break;
     case ('global'):
         globalCall(data);
-        break;
-    case ('genocide'):
-        genocideCall(data);
-        break;
-    case ('murder'):
-        murderCall(data);
         break;
     case ('internalRestart'):
         if (data.password !== process.env.OPERPASS) {
@@ -497,9 +389,6 @@ function onData(data, socket) {
         break;
     case ('restart'):
         //restartCall(data);
-        break;
-    case ('killgame'):
-        killgameCall(data);
         break;
     case ('privateServerRequest'):
         primus.room(socket.address.ip + data.uniqueID).write({
