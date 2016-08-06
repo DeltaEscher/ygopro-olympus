@@ -18,13 +18,8 @@ var fs = require('fs'),
     os = require('os'),
     path = require('path'),
     processManager = require('child_process'),
-    domain = require('domain'), // yay error handling,
-    CONFIGURATION = {
-        FORUM: 'localforum',
-        SITE: 'localhost',
-        ProductionFORUM: 'forum.ygopro.us',
-        ProductionSITE: 'ygopro.us'
-    };
+    domain = require('domain'); // yay error handling,
+
 
 var dependencies = require('./package.json').dependencies,
     modules,
@@ -133,14 +128,6 @@ function deckstorageBoot() {
     }).on('exit', deckstorageBoot);
 }
 
-function bootHTTPServer() {
-    console.log('    HTTP Server @ port 80'.bold.yellow);
-    processManager.fork('./httpserver.js', [], {
-        cwd: 'libs',
-        env: CONFIGURATION
-    }).on('exit', bootHTTPServer);
-}
-
 function bootGameList() {
     console.log('    Primus Server Game Manager @ port 24555'.bold.yellow);
     processManager.fork('./gamelist.js', [], {
@@ -216,23 +203,6 @@ function main() {
             //manualModeBoot();
 
         }, 2000);
-
-
-        var httpcheck = net.createServer(),
-            localhost = process.env.MAINSITE || '127.0.0.1';
-
-        httpcheck.once('error', function (err) {
-            httpcheck.close();
-            return;
-        });
-
-        httpcheck.once('listening', function () {
-            // close the server if listening doesn't fail
-            httpcheck.close();
-            bootHTTPServer();
-        });
-        httpcheck.listen(80, localhost);
-
     });
     delete process.send; // in case we're a child process
 }
