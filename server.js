@@ -18,8 +18,13 @@ var fs = require('fs'),
     os = require('os'),
     path = require('path'),
     processManager = require('child_process'),
-    domain = require('domain'); // yay error handling,
-
+    domain = require('domain'), // yay error handling,
+    CONFIGURATION = {
+        FORUM: 'localforum',
+        SITE: 'localhost',
+        ProductionFORUM: 'forum.ygopro.us',
+        ProductionSITE: 'ygopro.us'
+    };
 
 var dependencies = require('./package.json').dependencies,
     modules,
@@ -128,6 +133,14 @@ function deckstorageBoot() {
     }).on('exit', deckstorageBoot);
 }
 
+function bootHTTPServer() {
+    console.log('    HTTP Server @ port 80'.bold.yellow);
+    processManager.fork('./httpserver.js', [], {
+        cwd: 'libs',
+        env: CONFIGURATION
+    }).on('exit', bootHTTPServer);
+}
+
 function bootGameList() {
     console.log('    Primus Server Game Manager @ port 24555'.bold.yellow);
     processManager.fork('./gamelist.js', [], {
@@ -181,28 +194,33 @@ function main() {
     mainStack.run(function () {
 
         //segfaultHandler.registerHandler("crash.log"); // With no argument, SegfaultHandler will generate a generic log file name
-        process.title = 'YGOPro Salvation Server ' + new Date();
-        console.log('YGOPro Salvation Server - Saving Yu-Gi-Oh!'.bold.yellow);
+        process.title = 'YGOPro Olympus Server ' + new Date();
+        console.log('YGOPro Olympus Server'.bold.yellow);
 
-        //boot the microservices
-
-        //boot IRC
-        //boot anope
-        //boot 
         bootGameList();
-        bootFlashPolicyServer();
-        setTimeout(function () {
-            bootUpdateSystem();
-            bootlogger();
-            //manualModeBoot();
-        }, 1000);
+
         setTimeout(function () {
             bootManager();
-            bootAISystem();
-            deckstorageBoot();
-            //manualModeBoot();
+
 
         }, 2000);
+
+
+        var httpcheck = net.createServer(),
+            localhost = process.env.MAINSITE || '127.0.0.1';
+
+        httpcheck.once('error', function (err) {
+            httpcheck.close();
+            return;
+        });
+
+        httpcheck.once('listening', function () {
+            // close the server if listening doesn't fail
+            httpcheck.close();
+            bootHTTPServer();
+        });
+        httpcheck.listen(80, localhost);
+
     });
     delete process.send; // in case we're a child process
 }
