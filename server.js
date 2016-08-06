@@ -205,22 +205,6 @@ function main() {
 
         }, 2000);
 
-
-        var httpcheck = net.createServer(),
-            localhost = process.env.MAINSITE || '127.0.0.1';
-
-        httpcheck.once('error', function (err) {
-            httpcheck.close();
-            return;
-        });
-
-        httpcheck.once('listening', function () {
-            // close the server if listening doesn't fail
-            httpcheck.close();
-            bootHTTPServer();
-        });
-        httpcheck.listen(80, localhost);
-
     });
     delete process.send; // in case we're a child process
 }
