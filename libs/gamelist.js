@@ -6,27 +6,18 @@ var http = require('http'),
 
 var primus,
     gamelist = {},
-    registry = {
-        //People that have read this source code.
-        SnarkyChild: '::ffff:127.0.0.1',
-        AccessDenied: '::ffff:127.0.0.1',
-        Irate: '::ffff:127.0.0.1',
-        Chibi: '::ffff:127.0.0.1',
-        OmniMage: '::ffff:127.0.0.1'
-    },
+    registry = {},
     online = 0,
     activeDuels = 0,
     logins = 0,
     booting = true,
-    lockStatus = false,
+    request = require('request'),
     Primus = require('primus'),
     Rooms = require('primus-rooms'),
     primusServer = http.createServer().listen(24555),
-
     domain = require('domain'),
     path = require('path'),
-    ps = require('ps-node'),
-    currentGlobalMessage = '';
+    ps = require('ps-node');
 
 
 
@@ -198,16 +189,6 @@ function messageListener(message) {
     return gamelist;
 }
 
-var pidList = [];
-var acklevel = 0;
-
-function massAck() {
-    acklevel = 0;
-    announce({
-        clientEvent: 'ack'
-    });
-
-}
 
 function cleanGamelist() {
     var game,
@@ -246,15 +227,6 @@ function cleanGamelist() {
 
 }
 
-
-setInterval(function () {
-    cleanGamelist();
-    announce({
-        clientEvent: 'ackresult',
-        ackresult: acklevel
-    });
-    massAck();
-}, 10000);
 
 function sendRegistry() {
     internalMessage({
@@ -328,17 +300,6 @@ function onData(data, socket) {
             console.log('bad insternal request');
         }
         break;
-    case ('ai'):
-        if (socket.username) {
-            announce({
-                clientEvent: 'duelrequest',
-                target: 'SnarkyChild',
-                from: socket.username,
-                roompass: data.roompass,
-                deck: data.deck
-            });
-        }
-        break;
     case ('join'):
         socket.join(socket.address.ip + data.uniqueID);
         socket.write({
@@ -352,9 +313,6 @@ function onData(data, socket) {
         break;
     case ('leave'):
         socket.leave('activegames');
-        break;
-    case ('ack'):
-        acklevel++;
         break;
     case ('internalRestart'):
         if (data.password !== process.env.OPERPASS) {
@@ -370,32 +328,6 @@ function onData(data, socket) {
             clientEvent: 'privateServerRequest',
             parameter: data.parameter,
             local: data.local
-        });
-        break;
-    case ('privateServer'):
-        break;
-    case ('joinTournament'):
-        socket.join('tournament');
-        socket.write(JSON.stringify(gamelist));
-        break;
-    case ('privateUpdate'):
-        primus.room(socket.address.ip + data.uniqueID).write({
-            clientEvent: 'privateServer',
-            serverUpdate: data.serverUpdate
-        });
-
-        break;
-    case ('saveDeckRequest'):
-        primus.room(socket.address.ip + data.uniqueID).write({
-            clientEvent: 'saveDeck',
-            deckList: data.deckList,
-            deckName: data.deckName
-        });
-        break;
-    case ('unlinkDeckRequest'):
-        primus.room(socket.address.ip + data.uniqueID).write({
-            clientEvent: 'unlinkDeck',
-            deckName: data.deckName
         });
         break;
     default:
