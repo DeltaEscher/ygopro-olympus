@@ -24,6 +24,7 @@
     "primus-rooms": "^3.4.1",
     "ps-node": "^0.1.2",
     "request": "^2.74.0",
+    "trueskill": "0.0.2",
     "ws": "^1.1.1"
   }
 }
