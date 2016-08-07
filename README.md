@@ -36,7 +36,7 @@ Emanuel, Mercury, AccessDenied, and CreaturePhil (and anyone else who can help) 
 * Add TCG rulings
 * Create a subfolder in the scripts or expansions for each region. Currently, this is **TCG** and **OCG** [Script separate cards for TCG and OCG based on their regional rulings.]  (http://www.yugioh-card.com/en/gameplay/rulings_errata.html)
 * Put scripts in the allocated folder.
-* Rulings will be automatically determined via banlist. * **TCG** will be the default* Cards rulings will be scripted instead of editing the core.
+* Rulings will be automatically determined via banlist. _**TCG** will be the default._ Cards rulings will be scripted instead of editing the core.
 * Game mechanics that can't be managed by card scripts will be managed by the proper core or configuaration.
 
 ###Conifgured [SEGOC] (http://yugioh.wikia.com/wiki/Simultaneous_Effects_Go_On_Chain) for each Banlist
