@@ -17,15 +17,33 @@ var primus,
     primusServer = http.createServer().listen(24555),
     domain = require('domain'),
     path = require('path'),
-    ps = require('ps-node');
+    ps = require('ps-node'),
+    trueskill = require('trueskill');
 
 
+var mySQLConnectionDefaults = {
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'ranking'
+};
 
 setTimeout(function () {
     //give the system five seconds to figure itself out.
     booting = false;
 }, 5000);
 
+
+function makePlayer(skill, rank) {
+    return {
+        skill: skill,
+        rank: rank
+    };
+}
+
+function applyScore(playlist) {
+    trueskill.AdjustPlayers(playlist);
+}
 
 function internalMessage(announcement) {
     process.nextTick(function () {

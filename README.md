@@ -77,3 +77,9 @@ We can automatically record the number of times a card is used in a deck and div
 8. Add a new user to created room
 
 **[Mercury233]:** *It will read the messages YGOPRO client to server (CTOS), forward it to the YGOPRO server, and the messages server to client (STOC), forward it to the client.*
+
+
+#DB
+| Username      | Level         | Wins  | Loses | Draws |
+| ------------- |:-------------:|:-----:|:-----:|:-----:|
+| Player        | 1250          |     30| 5     | 0
