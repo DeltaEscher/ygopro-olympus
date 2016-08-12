@@ -4,20 +4,17 @@
 
 ###Runs only on Linux, best compatibility is Ubuntu from current setup
 
-Emanuel, Mercury, AccessDenied, and CreaturePhil (and anyone else who can help) need to go through Mercury’s code via voice chat. 
+Emanuel, Mercury, AccessDenied, and CreaturePhil (and anyone else who can help) need to go through source code via voice chat. 
 
 [Mercury's NodeJS Ygopro Server](https://github.com/mercury233/ygopro-server)
-
-* Handle Memory Leaks in Mercury’s NodeJS server
 
 * Re-analyze the NodeJS server code and optimize for better stability and performance
 
 * Emulate/Sandbox instances of server for error handling, debugging, and reducing overhead
 
-* Manage queues to increase capacity of server instances
+* Manage queues to increase capacity of server instances.
 
 * Implement [TrueSkill](https://github.com/freethenation/node-trueskill) Ranking system that calculates a user’s ranking and puts them on the correct room with their opponent.
-
 
 *TrueSkill works the same as Elo in terms of matchmaking. Players get paired with a player who is on queue with a similar Trueskill rating. -* **Antimetaman**
 
@@ -80,6 +77,6 @@ We can automatically record the number of times a card is used in a deck and div
 
 
 #DB
-| Username      | Level         | Wins  | Loses | Draws |
-| ------------- |:-------------:|:-----:|:-----:|:-----:|
-| Player        | 1250          |     30| 5     | 0
+| Username      |LogginCode            | Level         | Wins  | Loses | Draws |
+| ------------- |:--------------------:|:-------------:|:-----:|:-----:|:-----:|
+| Player        | PlayerName$PlayerPass| 1250          |     30| 5     | 0
