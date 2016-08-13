@@ -34,6 +34,7 @@ setTimeout(function () {
 }, 5000);
 
 
+//
 function makePlayer(skill, rank) {
     return {
         skill: skill,
