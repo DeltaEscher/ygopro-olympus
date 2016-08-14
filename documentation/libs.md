@@ -20,7 +20,7 @@
 <dt><a href="#module_- YGOPro Network Message Label">- YGOPro Network Message Label</a> : <code>function</code></dt>
 <dd><p>Takes a message frame, labels it.</p>
 </dd>
-<dt><a href="#- YGOSharp Router,module_ and Shell"> and Shell</a> : <code>function</code></dt>
+<dt><a href="#module_- YGOSharp Router and Shell">- YGOSharp Router and Shell</a> : <code>function</code></dt>
 <dd><p>This is the routing and proxy system. The System checks a number of CTOS commands and from them works out if to just route. the connection to an existing connection or start a new YGOCore. If a new YGOCore is needed it works out what config file is needed for that instance of dueling based on the <code>roompass</code> in the connection string of the <code>CTOS_JOIN</code> command.</p>
 </dd>
 </dl>
@@ -343,9 +343,9 @@ Takes a message frame, labels it.
 ```js
 var task = parsePackets('CTOS', new Buffer(messageFrame));
 ```
-<a name="- YGOSharp Router,module_ and Shell"></a>
+<a name="module_- YGOSharp Router and Shell"></a>
 
-##  and Shell : <code>function</code>
+## - YGOSharp Router and Shell : <code>function</code>
 This is the routing and proxy system. The System checks a number of CTOS commands and from them works out if to just route. the connection to an existing connection or start a new YGOCore. If a new YGOCore is needed it works out what config file is needed for that instance of dueling based on the `roompass` in the connection string of the `CTOS_JOIN` command.
 
 **Version**: 0.0.1  
@@ -354,12 +354,12 @@ This is the routing and proxy system. The System checks a number of CTOS command
 ```js
 processIncomingTrasmission(data, socket, task);
 ```
-<a name="- YGOSharp Router,module_ and Shell..portfinder"></a>
+<a name="module_- YGOSharp Router and Shell..portfinder"></a>
 
-###  and Shell~portfinder()
+### - YGOSharp Router and Shell~portfinder()
 Each YGOCore needs to operate on its own port,
 each SLAVE is given a range to loop through. This
 is actually a very poor way of doing this and
 frequently fails; rewrite is needed
 
-**Kind**: inner method of <code>[ and Shell](#- YGOSharp Router,module_ and Shell)</code>  
+**Kind**: inner method of <code>[- YGOSharp Router and Shell](#module_- YGOSharp Router and Shell)</code>  
