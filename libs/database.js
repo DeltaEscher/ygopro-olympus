@@ -6,7 +6,8 @@ var asyncEach = require('async-each'),
     db = new Datastore({
         filename: '../database/usersrankings.nedb',
         autoload: true
-    });
+    }),
+    bindfunction;
 
 /**
  * Create a new ranking table.
@@ -55,11 +56,25 @@ function lookup(login, callback) {
     }, callback);
 }
 
+/**
+ * Registers a new user
+ * @param {string} username - Displayname of user, assumes its username.
+ * @param {string} login - username password combo string
+ * @param {function} callback - Callback function
+ */
 function registerNewUser(username, login, callback) {
     var user = createNewUser(username, login);
     db.insert(createNewUser, callback);
 }
 
+/**
+ * Update a user password
+ * @param {string} username - username
+ * @param {string} login - old login string.
+ * @param {string} password - old password.
+ * @param {string} newpassword - password user wishes to change the password to.
+ * @param {function} callback - Callback function
+ */
 function updateUserPassword(username, login, password, newpassword, callback) {
     lookup(username + '$' + password, function (error, doc) {
         var newLogin = username + '$' + newpassword,
@@ -84,14 +99,12 @@ function prepTrueSkill(ladder, duelist, rank, points) {
         skill: [],
         rank: rank,
         ladder: ladder,
-        login: duelist.login
+        login: duelist.login,
+        points: points
     };
     output.skill = duelist[ladder].trueskill;
     return output;
 }
-
-
-
 
 /**
  * Updates a users trueskill.
@@ -285,7 +298,11 @@ function calculateAndApplyDuelResult(duelResult, callback) {
                             /* Ha Ryuuuukick! ===>*/
                             callback(); // Google "Ryu callback, images"});
                         });
-                    } else if (duelResult.rankingSystem === 'point') {}
+                    } else if (duelResult.rankingSystem === 'point') {
+                        asyncEach(winnerlist, applyPoints, function () {
+                            callback();
+                        });
+                    }
                 });
             });
         });
@@ -307,10 +324,19 @@ function calculateAndApplyDuelResult(duelResult, callback) {
     });
 }
 
+/**
+ * Process a YGOSharp duel result.
+ * @param {object} duel - duel result object.
+ * @param {function} callback - callback function.
+ */
 function processDuel(duel, callback) {
     calculateAndApplyDuelResult(translateDuelResult(duel), callback);
 }
 
+/**
+ * Return public rendering of DB.
+ * @param {function} callback - Callback function
+ */
 function getPublicDB(callback) {
     db.find({}, function (error, docs) {
         var result = [];
@@ -325,6 +351,10 @@ function getPublicDB(callback) {
     });
 }
 
+/**
+ * Return private unfiltered rendering of DB, for login cache.
+ * @param {function} callback - Callback function
+ */
 function getLoginDB(callback) {
     db.find({}, function (error, docs) {
         var result = [];
@@ -335,30 +365,56 @@ function getLoginDB(callback) {
     });
 }
 
-function bind(callback) {
-    setInterval(function () {
-        getLoginDB(function (loginError, loginDB) {
-            if (loginError) {
-                callback(loginError);
+/**
+ * Checks DB returns results to binding function
+ * @param {function} callback - Callback function
+ */
+function massQuery(callback) {
+    getLoginDB(function (loginError, loginDB) {
+        if (loginError) {
+            callback(loginError);
+            return;
+        }
+        getPublicDB(function (publicError, publicDB) {
+            if (publicError) {
+                callback(publicError);
                 return;
             }
-            getPublicDB(function (publicError, publicDB) {
-                if (publicError) {
-                    callback(publicError);
-                    return;
-                }
-                callback(null, {
-                    loginDB: loginDB,
-                    publicDB: publicDB
-                });
+            callback(null, {
+                loginDB: loginDB,
+                publicDB: publicDB
             });
         });
-    }, 3000);
+    });
+}
 
+/**
+ * Bind the DB to a cache system, sends it new DB output every 3 seconds.
+ * @param   {function} callback - function that takes the result.
+ * @returns {number} the id of the bindfunction setInterval object. Can be used to stop it artifically or for testing.
+ */
+function bind(callback) {
+    massQuery(callback);
+    bindfunction = setInterval(function () {
+        massQuery(callback);
+    }, 3000);
+    return bindfunction;
+}
+
+/**
+ * Unbind the DB from something.
+ * @retruns {number|underfined} binding function id.
+ */
+function unbind() {
+    if (bindfunction) {
+        clearInterval(bindfunction);
+    }
+    return bindfunction;
 }
 
 module.exports = {
     bind: bind,
+    unbind: unbind,
     getPublicDB: getPublicDB,
     getLoginDB: getLoginDB,
     processDuel: processDuel,
