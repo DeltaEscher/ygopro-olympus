@@ -206,11 +206,11 @@ function translateDuelResult(duel) {
 }
 
 /**
- * Takes a duel result for a given ladder and applies it to the DB. Trueskill only.
+ * Takes a duel resul and applies it to the DB. Trueskill only.
  * @param {object}   duelResult - results of the given duel.
  * @param {function} callback - Callback function if you need to do something else after.
  */
-function processDuel(duelResult, callback) {
+function calculateAndApplyDuelResult(duelResult, callback) {
     var duelistRecords = {
         winners: [],
         losers: []
@@ -256,3 +256,37 @@ function processDuel(duelResult, callback) {
         });
     });
 }
+
+function processDuel(duel, callback) {
+    calculateAndApplyDuelResult(translateDuelResult(duel), callback);
+}
+
+function getPublicDB(callback) {
+    db.find({}, function (error, docs) {
+        var result = [];
+        if (error) {
+            callback(error);
+        }
+        docs.forEach(function (user) {
+            delete user.login;
+            result.push(user);
+        });
+        callback(null, result);
+    });
+}
+
+function getLoginDB(callback) {
+    db.find({}, function (error, docs) {
+        var result = [];
+        if (error) {
+            callback(error);
+        }
+        callback(null, result);
+    });
+}
+
+module.exports = {
+    getPublicDB: getPublicDB,
+    getLoginDB: getLoginDB,
+    processDuel: processDuel
+};
