@@ -12,31 +12,20 @@ var express = require('express'),
     app = express(),
     vhost = require('vhost'),
     serveIndex = require('serve-index'),
-    site = process.env.ProductionSITE || 'ygorankings.ml';
+    site = process.env.ProductionSITE || 'ygorankings.ml',
+    rankingDB = require('./database.js');
 
 var primus,
     gamelist = {},
     registry = {},
-    online = 0,
-    activeDuels = 0,
-    logins = 0,
+
     booting = true,
-    request = require('request'),
     Primus = require('primus'),
     Rooms = require('primus-rooms'),
     primusServer = http.createServer().listen(24555),
     domain = require('domain'),
     path = require('path'),
-    ps = require('ps-node'),
-    trueskill = require('trueskill');
-
-
-var mySQLConnectionDefaults = {
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'ranking'
-};
+    ps = require('ps-node');
 
 setTimeout(function () {
     //give the system five seconds to figure itself out.
@@ -50,10 +39,6 @@ function makePlayer(skill, rank) {
         skill: skill,
         rank: rank
     };
-}
-
-function applyScore(playlist) {
-    trueskill.AdjustPlayers(playlist);
 }
 
 function internalMessage(announcement) {
@@ -193,25 +178,12 @@ function messageListener(message) {
         }
     });
     messageListenerWatcher.run(function () {
-        activeDuels = 0;
         var brokenup = message.core_message_raw.toString().split('\r\n'),
             game,
             users,
             i = 0;
         for (i; brokenup.length > i; i++) {
             handleCoreMessage(brokenup[i], message.port, message.pid, message.game);
-        }
-        activeDuels = 0;
-        for (game in gamelist) {
-            if (gamelist.hasOwnProperty(game)) {
-                activeDuels++;
-            }
-        }
-        logins = 0;
-        for (users in registry) {
-            if (registry.hasOwnProperty(users)) {
-                logins++;
-            }
         }
         announce(JSON.stringify(gamelist));
     });
@@ -405,6 +377,11 @@ app.use(function (req, res, next) {
     }
 });
 
+
+rankingDB.bind(function (error, result) {
+
+});
+
 app.post('/register', function (req, res) {
     res.send('POST request for register');
 });
@@ -418,5 +395,3 @@ app.get('/ladder', function (req, res) {
 });
 
 app.listen(80);
-
-require('fs').watch(__filename, process.exit);
