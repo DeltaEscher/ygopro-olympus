@@ -8,7 +8,10 @@ var asyncEach = require('async-each'),
         autoload: true
     });
 
-
+/**
+ * Create a new ranking table.
+ * @returns {object} Ranking table.
+ */
 function createRankingBase() {
     return {
         wins: 0,
@@ -21,6 +24,11 @@ function createRankingBase() {
     };
 }
 
+/**
+ * Creates a new user
+ * @param   {string} username Username
+ * @returns {object}  DB ready user to add to the DB.
+ */
 function createNewUser(username) {
 
     return {
@@ -30,11 +38,18 @@ function createNewUser(username) {
         ocg: createRankingBase(),
         ocgtcg: createRankingBase(),
         worlds: createRankingBase(),
-        goat: createRankingBase()
+        goat: createRankingBase() //too soon.
 
     };
 }
 
+/**
+ * [[Description]]
+ * @param   {string} ladder  - tcg/ocg/tcgocg, ranking latter being used.
+ * @param   {object} duelist - Duelist object with information on it from the DB.
+ * @param   {number} rank - 1 for winner, 2 for loser.
+ * @returns {object} object - representing the player that can be used in the trueskill engine.
+ */
 function prepTrueSkill(ladder, duelist, rank) {
     var output = {
         skill: [],
@@ -47,13 +62,22 @@ function prepTrueSkill(ladder, duelist, rank) {
 }
 
 
-
+/**
+ * Finds a user in the DB and returns it via callback
+ * @param {string} login - username$password string representing how a duelist tells the server thier name.
+ * @param {function} callback - Callback function.
+ */
 function lookup(login, callback) {
     db.find({
         login: login
     }, callback);
 }
 
+/**
+ * Updates a users trueskill.
+ * @param {object}   duelist  [[Description]]
+ * @param {function} callback - Callback function.
+ */
 function updatePlayerTrueSkill(duelist, callback) {
     var query = {
             login: duelist.login
@@ -71,16 +95,23 @@ function updatePlayerTrueSkill(duelist, callback) {
     result : {
         winner : 0,
         method : 2
-    }
+    },
+    ladder : 'tcg'
 }*/
 /*var = tagduel{
     players : ['name', 'name', 'name', 'name'],
     result : {
         winner : 0,
         method : 2
-    }
+    },
+    ladder : 'worlds'
 }*/
 
+/**
+ * Takes input from YGOSharp duel results and translates it into an object the system can comsume.
+ * @param   {object} duel - YGOSharp game result.
+ * @returns {object} - object system can comsume.
+ */
 function translateDuelResult(duel) {
     var duelresult = {
         won: [],
@@ -108,10 +139,16 @@ function translateDuelResult(duel) {
             duelresult.loss.push(duel.players[1]);
         }
     }
+    duelresult.ladder = duel.ladder;
     return duelresult;
 }
 
-function processDuel(duelResult, ladder, callback) {
+/**
+ * Takes a duel result for a given ladder and applies it to the DB. Trueskill only.
+ * @param {object}   duelResult - results of the given duel.
+ * @param {function} callback - Callback function if you need to do something else after.
+ */
+function processDuel(duelResult, callback) {
     var duelistRecords = {
         winners: [],
         losers: []
@@ -120,10 +157,10 @@ function processDuel(duelResult, ladder, callback) {
     function applySkill() {
         var skillEngine = [];
         duelistRecords.winners.forEach(function (duelist, sequence) {
-            skillEngine.push(prepTrueSkill(ladder, duelist, 1));
+            skillEngine.push(prepTrueSkill(duelResult.ladder, duelist, 1));
         });
         duelistRecords.losers.forEach(function (duelist, sequence) {
-            skillEngine.push(prepTrueSkill(ladder, duelist, 2));
+            skillEngine.push(prepTrueSkill(duelResult.ladder, duelist, 2));
         });
         trueskill.AdjustPlayers(skillEngine);
         asyncEach(skillEngine, updatePlayerTrueSkill, function () {
