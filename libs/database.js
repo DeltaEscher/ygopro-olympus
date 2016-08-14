@@ -1,3 +1,33 @@
+/**
+ * @author Jamezs "AccessDenied" L Gladney, August 2016.
+ * @version 0.0.1
+ */
+
+/**
+ * @example
+ * var rankingDB = require('./rankingDB'),
+ *     publicDB,
+ *     loginDB;
+ *     
+ * rankingDB.bind(function(error, results){
+ *     if (error){
+ *         throw error;
+ *      }
+ *      publicDB = results.publicDB;
+ *      loginDB = results.loginDB;
+ * });
+ * 
+ * rankingDB.processDuel({
+ *     players : ['winner$1234', 'loser$password'],
+ *     result : {
+ *         winner : 0,
+ *         method : 2
+ *     },
+ *     ladder : 'tcg',
+ *     rankingSystem : 'trueskill'
+ * }, function(){});
+ */
+
 /*jslint node:true*/
 'use strict';
 var asyncEach = require('async-each'),
