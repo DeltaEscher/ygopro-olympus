@@ -354,6 +354,32 @@ This is the routing and proxy system. The System checks a number of CTOS command
 ```js
 processIncomingTrasmission(data, socket, task);
 ```
+
+* [- YGOSharp Router and Shell](#module_- YGOSharp Router and Shell) : <code>function</code>
+    * [~processTask()](#module_- YGOSharp Router and Shell..processTask)
+    * [~connectToCore()](#module_- YGOSharp Router and Shell..connectToCore)
+    * [~portfinder()](#module_- YGOSharp Router and Shell..portfinder)
+    * [~pickCoreConfig()](#module_- YGOSharp Router and Shell..pickCoreConfig)
+    * [~handleCoreMessage()](#module_- YGOSharp Router and Shell..handleCoreMessage)
+    * [~legalPassword(passIn)](#module_- YGOSharp Router and Shell..legalPassword) ⇒ <code>boolean</code>
+    * [~startCore()](#module_- YGOSharp Router and Shell..startCore)
+    * [~processIncomingTrasmission()](#module_- YGOSharp Router and Shell..processIncomingTrasmission)
+
+<a name="module_- YGOSharp Router and Shell..processTask"></a>
+
+### - YGOSharp Router and Shell~processTask()
+Listen to the MASTER  process for messages to the SLAVE 
+processes. That message will be an update to the internal
+gamelist of each SLAVE process
+
+**Kind**: inner method of <code>[- YGOSharp Router and Shell](#module_- YGOSharp Router and Shell)</code>  
+<a name="module_- YGOSharp Router and Shell..connectToCore"></a>
+
+### - YGOSharp Router and Shell~connectToCore()
+After determining the routing location, then connect the CLIENT to
+the proper YGOCore and monitor the connection
+
+**Kind**: inner method of <code>[- YGOSharp Router and Shell](#module_- YGOSharp Router and Shell)</code>  
 <a name="module_- YGOSharp Router and Shell..portfinder"></a>
 
 ### - YGOSharp Router and Shell~portfinder()
@@ -361,5 +387,59 @@ Each YGOCore needs to operate on its own port,
 each SLAVE is given a range to loop through. This
 is actually a very poor way of doing this and
 frequently fails; rewrite is needed
+
+**Kind**: inner method of <code>[- YGOSharp Router and Shell](#module_- YGOSharp Router and Shell)</code>  
+<a name="module_- YGOSharp Router and Shell..pickCoreConfig"></a>
+
+### - YGOSharp Router and Shell~pickCoreConfig()
+The routing is done based on the
+game string or rather `roompass` in
+connection request
+
+**Kind**: inner method of <code>[- YGOSharp Router and Shell](#module_- YGOSharp Router and Shell)</code>  
+<a name="module_- YGOSharp Router and Shell..handleCoreMessage"></a>
+
+### - YGOSharp Router and Shell~handleCoreMessage()
+send the YGOCore API commands back to the main process, some cleanup
+is needed before sending the message. Basic logging for finding idiots
+later after they have misbehaved or providing administrative ablities
+to kill or act on games
+
+**Kind**: inner method of <code>[- YGOSharp Router and Shell](#module_- YGOSharp Router and Shell)</code>  
+<a name="module_- YGOSharp Router and Shell..legalPassword"></a>
+
+### - YGOSharp Router and Shell~legalPassword(passIn) ⇒ <code>boolean</code>
+Checks if a given password is valid, returns true or false
+
+**Kind**: inner method of <code>[- YGOSharp Router and Shell](#module_- YGOSharp Router and Shell)</code>  
+**Returns**: <code>boolean</code> - [[Description]]  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| passIn | <code>string</code> | [[Description]] |
+
+<a name="module_- YGOSharp Router and Shell..startCore"></a>
+
+### - YGOSharp Router and Shell~startCore()
+Unlike DevPro, Salvation does not preload its 
+YGOCores. It calls them on demand. This posses a 
+few issues but provides routing flexiblity. When a
+YGOCore is needed it needs to figure out a few
+things. 1.) The configuration file, 2.) a port
+number to use and 3.) if it is a valid duel to use
+server resources on.
+
+**Kind**: inner method of <code>[- YGOSharp Router and Shell](#module_- YGOSharp Router and Shell)</code>  
+<a name="module_- YGOSharp Router and Shell..processIncomingTrasmission"></a>
+
+### - YGOSharp Router and Shell~processIncomingTrasmission()
+Call the server and make
+sure the user is registered and
+not banned. This call is beside
+the normal duel request so the
+user can connect to a game
+possibly before being DC'd
+based on connection speeds.
+..and VOLIA! Game Request Routing
 
 **Kind**: inner method of <code>[- YGOSharp Router and Shell](#module_- YGOSharp Router and Shell)</code>  

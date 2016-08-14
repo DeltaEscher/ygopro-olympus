@@ -134,10 +134,10 @@ fs.exists(startDirectory + '../../ygosharp/YGOSharp.exe', function (exist) {
 });
 
 
-/* Listen to the MASTER  process for messages to the SLAVE 
+/**
+* Listen to the MASTER  process for messages to the SLAVE 
 processes. That message will be an update to the internal
 gamelist of each SLAVE process */
-
 function processTask(task, socket) {
 
     var i = 0,
@@ -162,9 +162,9 @@ function processTask(task, socket) {
 }
 
 
-/* After determining the routing location, then connect the CLIENT to
-the proper YGOCore and monitor the connection */
-
+/** After determining the routing location, then connect the CLIENT to
+the proper YGOCore and monitor the connection
+*/
 function connectToCore(port, data, socket) {
 
 
@@ -243,10 +243,9 @@ function portfinder(min, max, callback) {
 
 }
 
-/* The routing is done based on the
+/** The routing is done based on the
 game string or rather `roompass` in
 connection request */
-
 function pickCoreConfig(socket) {
 
     var output = 'ini/';
@@ -265,31 +264,12 @@ function pickCoreConfig(socket) {
 }
 
 
-//function makeCoverMsg(player, domain, username) {
-//    var ctos = new Buffer([0x30, player]),
-//        blanksite = new Buffer(new Array(256).fill('0', 0, 256)),
-//        blankdir = new Buffer(new Array(256).fill('0', 0, 256)),
-//        site = new Buffer(domain + '\u0000', 'utf16le'),
-//        dir = new Buffer('covers/' + username + '.jpg\u0000', 'utf16le'),
-//        len = 2 + site.length + dir.length,
-//        proto = new Buffer(2),
-//        read;
-//
-//    site.copy(blanksite);
-//    dir.copy(blankdir);
-//    read = Buffer.concat([site, dir]);
-//    console.log(read.toString('utf16le'));
-//    proto.writeUInt16LE(len, 0);
-//    proto = Buffer.concat([proto, ctos, site, dir]);
-//    console.log(proto);
-//    return proto;
-//}
 
-/* send the YGOCore API commands back to the main process, some cleanup
+
+/** send the YGOCore API commands back to the main process, some cleanup
 is needed before sending the message. Basic logging for finding idiots
 later after they have misbehaved or providing administrative ablities
 to kill or act on games */
-
 function handleCoreMessage(core_message_raw, port, socket, data, pid) {
 
     if (core_message_raw.toString().indexOf("::::") < 0) {
@@ -314,22 +294,13 @@ function handleCoreMessage(core_message_raw, port, socket, data, pid) {
             game: socket.hostString
         }
     });
-    //    try {
-    //        if (core_message[0].trim() === '::::start-game') {
-    //
-    //            for (n = 0; gamelist[socket.hostString].players.length > n; n++) {
-    //                //send (n, gamelist[socket.hostString].players[n]);
-    //                //socket.write(makeCoverMsg(n, 'http://ygopro.us/', gamelist[socket.hostString].players[n]));
-    //                //console.log('sending cover data');
-    //                //socket.write(makeCoverMsg(n, 'ygopro.us', 'SnarkyChild'));
-    //            }
-    //        }
-    //    } catch (massiveErr) {
-    //        console.log(massiveErr);
-    //    }
 }
 
-/* Checks if a given password is valid, returns true or false */
+/**
+ * Checks if a given password is valid, returns true or false
+ * @param   {string} passIn [[Description]]
+ * @returns {boolean}  [[Description]]
+ */
 function legalPassword(passIn) {
     if (passIn.length !== 24) {
         console.log('    [ProcessCTOS]', 'Invalid password length', passIn);
@@ -364,14 +335,13 @@ function authenticate(socket) {
     }
 }
 
-/* Unlike DevPro, Salvation does not preload its 
+/**Unlike DevPro, Salvation does not preload its 
 YGOCores. It calls them on demand. This posses a 
 few issues but provides routing flexiblity. When a
 YGOCore is needed it needs to figure out a few
 things. 1.) The configuration file, 2.) a port
 number to use and 3.) if it is a valid duel to use
 server resources on. */
-
 function startCore(port, socket, data, callback) {
     authenticate(socket);
 
@@ -443,15 +413,14 @@ function startCore(port, socket, data, callback) {
 
 
 
-/* Call the server and make
+/** Call the server and make
 sure the user is registered and
 not banned. This call is beside
 the normal duel request so the
 user can connect to a game
 possibly before being DC'd
-based on connection speeds. */
-
-/* ..and VOLIA! Game Request Routing */
+based on connection speeds.
+..and VOLIA! Game Request Routing */
 function processIncomingTrasmission(data, socket, task) {
     processTask(task, socket);
     authenticate(socket);
