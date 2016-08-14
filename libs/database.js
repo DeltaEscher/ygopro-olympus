@@ -69,11 +69,11 @@ function updateUserPassword(username, login, password, newpassword, callback) {
                 }
             };
         db.update(login, update, callback);
-    })
+    });
 }
 
 /**
- * [[Description]]
+ * Create user object that TrueSkill can work off of.
  * @param   {string} ladder  - tcg/ocg/tcgocg, ranking latter being used.
  * @param   {object} duelist - Duelist object with information on it from the DB.
  * @param   {number} rank - 1 for winner, 2 for loser.
@@ -95,7 +95,7 @@ function prepTrueSkill(ladder, duelist, rank, points) {
 
 /**
  * Updates a users trueskill.
- * @param {object}   duelist  [[Description]]
+ * @param {object} duelist  - TrueSkill user object
  * @param {function} callback - Callback function.
  */
 function updatePlayerTrueSkill(duelist, callback) {
@@ -111,7 +111,7 @@ function updatePlayerTrueSkill(duelist, callback) {
 
 /**
  * increaments a duelist wins
- * @param {object}   duelist  [[Description]]
+ * @param {object} duelist  - TrueSkill user object
  * @param {function} callback - Callback function.
  */
 function applyWin(duelist, callback) {
@@ -132,7 +132,7 @@ function applyWin(duelist, callback) {
 
 /**
  * increaments a duelist losses
- * @param {object}   duelist  [[Description]]
+ * @param {object} duelist  - TrueSkill user object
  * @param {function} callback - Callback function.
  */
 function applyLosses(duelist, callback) {
@@ -153,7 +153,7 @@ function applyLosses(duelist, callback) {
 
 /**
  * increaments a duelist draws
- * @param {object}   duelist  [[Description]]
+ * @param {object} duelist  - TrueSkill user object
  * @param {function} callback - Callback function.
  */
 function applyDraws(duelist, callback) {
@@ -335,8 +335,33 @@ function getLoginDB(callback) {
     });
 }
 
+function bind(callback) {
+    setInterval(function () {
+        getLoginDB(function (loginError, loginDB) {
+            if (loginError) {
+                callback(loginError);
+                return;
+            }
+            getPublicDB(function (publicError, publicDB) {
+                if (publicError) {
+                    callback(publicError);
+                    return;
+                }
+                callback(null, {
+                    loginDB: loginDB,
+                    publicDB: publicDB
+                });
+            });
+        });
+    }, 3000);
+
+}
+
 module.exports = {
+    bind: bind,
     getPublicDB: getPublicDB,
     getLoginDB: getLoginDB,
-    processDuel: processDuel
+    processDuel: processDuel,
+    registerNewUser: registerNewUser,
+    updateUserPassword: updateUserPassword
 };
