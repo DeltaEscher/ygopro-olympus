@@ -1,11 +1,13 @@
-/*jslint node: true, plusplus: true, unparam: false, nomen: true*/
+/**
+ * @module {function} - YGOSharp Router, and Shell
+ * @description This is the routing and proxy system. The System checks a number of CTOS commands and from them works out if to just route. the connection to an existing connection or start a new YGOCore. If a new YGOCore is needed it works out what config file is needed for that instance of dueling based on the `roompass` in the connection string of the `CTOS_JOIN` command.
+ * @author Jamezs "AccessDenied" L Gladney.
+ * @version 0.0.1
+ * @example 
+    processIncomingTrasmission(data, socket, task);
+ */
 
-/* This is the YGOCore routing and proxy system. The System checks
-a number of CTOS commands and from them works out if to just route
-the connection to an existing connection or start a new YGOCore.
-If a new YGOCore is needed it works out what config file is needed
-for that instance of dueling based on the `roompass` in the
-connection string of the `CTOS_JOIN` command */
+/*jslint node: true, plusplus: true, unparam: false, nomen: true*/
 
 'use strict';
 var portmin = 30000 + process.env.PORTRANGE * 100, //Port Ranges
@@ -48,22 +50,6 @@ var portmin = 30000 + process.env.PORTRANGE * 100, //Port Ranges
 
     childProcess = require('child_process'),
     startDirectory = __dirname;
-
-//if (cluster.isWorker) {
-//    process.on('message', function (message) {
-//
-//
-//        if (message.gamelist) {
-//            gamelist = message.gamelist;
-//        }
-//        if (message.registry) {
-//            registry = message.registry;
-//        }
-//    });
-//}
-
-//client.on('connected', function () {});
-//client.on('close', function () {}); // start shutting down server.
 
 
 var primaryScripts = {
@@ -222,12 +208,10 @@ function connectToCore(port, data, socket) {
 
 }
 
-/* Each YGOCore needs to operate on its own port,
+/** Each YGOCore needs to operate on its own port,
 each SLAVE is given a range to loop through. This
 is actually a very poor way of doing this and
 frequently fails; rewrite is needed*/
-
-
 
 function portfinder(min, max, callback) {
     var rooms,
