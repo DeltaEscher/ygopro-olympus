@@ -1,4 +1,11 @@
+/**
+ * @module {object} - YGOPro Enumerals
+ * @author Jamezs "AccessDenied" L Gladney.
+ * @version 0.0.1
+ */
+
 /*jslint node:true*/
+
 
 module.exports = {
     locations: {
@@ -292,7 +299,7 @@ module.exports.CTOS = {
     0x23: "CTOS_HS_NOTREADY",
     0x24: "CTOS_HS_KICK",
     0x25: "CTOS_HS_START"
-    //defunc 0x26: "DEVPRO_GAME_INFO"
+        //defunc 0x26: "DEVPRO_GAME_INFO"
 
 };
 

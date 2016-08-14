@@ -1,3 +1,21 @@
+## Modules
+
+<dl>
+<dt><a href="#module_- Ranking Database">- Ranking Database</a> : <code>object</code></dt>
+<dd><ul>
+<li>Ranking Database</li>
+</ul>
+</dd>
+<dt><a href="#module_- YGOPro Enumerals">- YGOPro Enumerals</a> : <code>object</code></dt>
+<dd><ul>
+<li>YGOPro Enumerals</li>
+</ul>
+</dd>
+<dt><a href="#module_- YGOSharp Service Manager">- YGOSharp Service Manager</a> : <code>object</code></dt>
+<dd><p>Creates and manages multi process listener for incoming YGOPro Game request, will create masters and slaves of itself.</p>
+</dd>
+</dl>
+
 <a name="module_- Ranking Database"></a>
 
 ## - Ranking Database : <code>object</code>
@@ -253,3 +271,32 @@ Unbind the DB from something.
 
 **Kind**: inner method of <code>[- Ranking Database](#module_- Ranking Database)</code>  
 **Retruns**: <code>number\|underfined</code> binding function id.  
+<a name="module_- YGOPro Enumerals"></a>
+
+## - YGOPro Enumerals : <code>object</code>
+- YGOPro Enumerals
+
+**Version**: 0.0.1  
+**Author:** Jamezs "AccessDenied" L Gladney.  
+<a name="module_- YGOSharp Service Manager"></a>
+
+## - YGOSharp Service Manager : <code>object</code>
+Creates and manages multi process listener for incoming YGOPro Game request, will create masters and slaves of itself.
+
+**Version**: 0.0.1  
+**Author:** Jamezs "AccessDenied" L Gladney.  
+**Example**  
+```js
+var gameManager = require('./game-manager.js');
+```
+<a name="module_- YGOSharp Service Manager..initiateMaster"></a>
+
+### - YGOSharp Service Manager~initiateMaster(numCPUs)
+Initiates a number of works.
+
+**Kind**: inner method of <code>[- YGOSharp Service Manager](#module_- YGOSharp Service Manager)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| numCPUs | <code>number</code> | number of CPUS the host computer has. |
+

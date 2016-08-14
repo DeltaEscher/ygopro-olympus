@@ -1,5 +1,14 @@
 /*jslint  node: true, plusplus: true*/
-/* This is bad code */
+
+
+/**
+ * @module {object} - YGOSharp Service Manager
+ * @description Creates and manages multi process listener for incoming YGOPro Game request, will create masters and slaves of itself.
+ * @author Jamezs "AccessDenied" L Gladney.
+ * @version 0.0.1
+ * @example
+ * var gameManager = require('./game-manager.js');
+ */
 
 'use strict';
 var notification = '', // its a string, make memory.
@@ -12,6 +21,10 @@ var notification = '', // its a string, make memory.
     processManager = require('child_process'),
     numCPUs = 1;
 
+/**
+ * Initiates a number of works.
+ * @param {number} numCPUs number of CPUS the host computer has.
+ */
 function initiateMaster(numCPUs) {
     function setupWorker(x) {
         //'use strict';
@@ -26,7 +39,7 @@ function initiateMaster(numCPUs) {
         for (clusterIterator; clusterIterator < numCPUs; clusterIterator++) {
             setupWorker(clusterIterator);
         }
-    }, 5000);
+    }, 1000);
 
     cluster.on('exit', function (worker, code, signal) {
         notification = 'worker ' + clusterIterator + ' died ' + code + ' ' + signal;
@@ -40,7 +53,7 @@ function initiateMaster(numCPUs) {
 }
 
 
-(function main() {
+function main() {
     if (process.env.SLAVE) {
         require('./slave.js');
         return;
@@ -51,6 +64,10 @@ function initiateMaster(numCPUs) {
         }
         initiateMaster(numCPUs);
     }
-}()); // end main var numCPUs = 1; // atleast 1 slave and 1 master.
+} // end main var numCPUs = 1; // atleast 1 slave and 1 master.
 
 require('fs').watch(__filename, process.exit);
+
+module.exports = {
+    startupAttempt: setTimeout(main, 300)
+};
