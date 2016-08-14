@@ -27,13 +27,14 @@ function createRankingBase() {
 /**
  * Creates a new user
  * @param   {string} username Username
+ * @param {string} displayName$password max 20chars each formated password.
  * @returns {object}  DB ready user to add to the DB.
  */
-function createNewUser(username) {
+function createNewUser(username, login) {
 
     return {
         username: username,
-        login: '',
+        login: login,
         tcg: createRankingBase(),
         ocg: createRankingBase(),
         ocgtcg: createRankingBase(),
@@ -42,25 +43,6 @@ function createNewUser(username) {
 
     };
 }
-
-/**
- * [[Description]]
- * @param   {string} ladder  - tcg/ocg/tcgocg, ranking latter being used.
- * @param   {object} duelist - Duelist object with information on it from the DB.
- * @param   {number} rank - 1 for winner, 2 for loser.
- * @returns {object} object - representing the player that can be used in the trueskill engine.
- */
-function prepTrueSkill(ladder, duelist, rank) {
-    var output = {
-        skill: [],
-        rank: rank,
-        ladder: ladder,
-        login: duelist.login
-    };
-    output.skill = duelist[ladder].trueskill;
-    return output;
-}
-
 
 /**
  * Finds a user in the DB and returns it via callback
@@ -72,6 +54,44 @@ function lookup(login, callback) {
         login: login
     }, callback);
 }
+
+function registerNewUser(username, login, callback) {
+    var user = createNewUser(username, login);
+    db.insert(createNewUser, callback);
+}
+
+function updateUserPassword(username, login, password, newpassword, callback) {
+    lookup(username + '$' + password, function (error, doc) {
+        var newLogin = username + '$' + newpassword,
+            update = {
+                $set: {
+                    login: newLogin
+                }
+            };
+        db.update(login, update, callback);
+    })
+}
+
+/**
+ * [[Description]]
+ * @param   {string} ladder  - tcg/ocg/tcgocg, ranking latter being used.
+ * @param   {object} duelist - Duelist object with information on it from the DB.
+ * @param   {number} rank - 1 for winner, 2 for loser.
+ * @returns {object} object - representing the player that can be used in the trueskill engine.
+ */
+function prepTrueSkill(ladder, duelist, rank, points) {
+    var output = {
+        skill: [],
+        rank: rank,
+        ladder: ladder,
+        login: duelist.login
+    };
+    output.skill = duelist[ladder].trueskill;
+    return output;
+}
+
+
+
 
 /**
  * Updates a users trueskill.
@@ -152,13 +172,35 @@ function applyDraws(duelist, callback) {
     });
 }
 
+/**
+ * Increaments a duelist won points
+ * @param {object}   duelist  [[Description]]
+ * @param {function} callback - Callback function.
+ */
+function applyPoints(duelist, callback) {
+    lookup(duelist.login, function (error, doc) {
+        if (error) {
+            throw error;
+        }
+        var query = {
+                login: duelist.login
+            },
+            update = {
+                $set: {}
+            };
+        update.$set[duelist.ladder].points = doc[0][duelist.ladder].points + duelist.points;
+        db.update(query, update, callback);
+    });
+}
+
 /*var = matchorsingleduel{
     players : ['name', 'name'],
     result : {
         winner : 0,
         method : 2
     },
-    ladder : 'tcg'
+    ladder : 'tcg',
+    rankingSystem : 'trueskill' // can be 'trueskill', 'elo', or 'points'?
 }*/
 /*var = tagduel{
     players : ['name', 'name', 'name', 'name'],
@@ -166,7 +208,9 @@ function applyDraws(duelist, callback) {
         winner : 0,
         method : 2
     },
-    ladder : 'worlds'
+    ladder : 'worlds',
+    rankingSystem : 'trueskill',
+    points : 0
 }*/
 
 /**
@@ -177,7 +221,8 @@ function applyDraws(duelist, callback) {
 function translateDuelResult(duel) {
     var duelresult = {
         won: [],
-        loss: []
+        loss: [],
+        rankingSystem: duel.rankingSystem || 'trueskill'
     };
 
     if (duel.players.length === 2) {
@@ -222,24 +267,29 @@ function calculateAndApplyDuelResult(duelResult, callback) {
             losserlist = [],
             drawlist = [];
 
+
         duelistRecords.winners.forEach(function (duelist, sequence) {
-            skillEngine.push(prepTrueSkill(duelResult.ladder, duelist, 1));
+            skillEngine.push(prepTrueSkill(duelResult.ladder, duelist, 1, duelResult.points));
         });
         duelistRecords.losers.forEach(function (duelist, sequence) {
-            skillEngine.push(prepTrueSkill(duelResult.ladder, duelist, 2));
+            skillEngine.push(prepTrueSkill(duelResult.ladder, duelist, 2, 0));
         });
         trueskill.AdjustPlayers(skillEngine);
 
-        asyncEach(skillEngine, updatePlayerTrueSkill, function () {
-            asyncEach(winnerlist, applyWin, function () {
-                asyncEach(losserlist, applyLosses, function () {
-                    asyncEach(drawlist, applyDraws, function () {
-                        /* Ha Ryuuuukick! ===>*/
-                        callback(); // Google "Ryu callback, images"
-                    });
+
+        asyncEach(winnerlist, applyWin, function () {
+            asyncEach(losserlist, applyLosses, function () {
+                asyncEach(drawlist, applyDraws, function () {
+                    if (duelResult.rankingSystem === 'trueskill') {
+                        asyncEach(skillEngine, updatePlayerTrueSkill, function () {
+                            /* Ha Ryuuuukick! ===>*/
+                            callback(); // Google "Ryu callback, images"});
+                        });
+                    } else if (duelResult.rankingSystem === 'point') {}
                 });
             });
         });
+
     }
 
     asyncEach(duelResult.won, lookup, function (error, contents) {
