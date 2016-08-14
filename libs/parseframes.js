@@ -1,24 +1,20 @@
 /*jslint node : true*/
 /**
- * @module {object} - YGOPro Network Message Seperator
+ * @module {function} - YGOPro Network Message Seperator
  * @description Takes stream of YGOPro network input, slices in individual messages for further processing
  * @author Jamezs "AccessDenied" L Gladney.
  * @version 0.0.1
  * @example 
  * var framer = new Framemaker();
         socket.on('data', function listener(data) {
-            var frame,
-                task,
-                newframes = 0;
-            socket.heartbeat++;
-            if (socket.active_ygocore) {
-                socket.active_ygocore.write(data);
-            }
+            var frame;
             frame = framer.input(data);
-            for (newframes; frame.length > newframes; newframes++) {
+            frame.forEach(function(messageFrame){
                 //process the frames.
-                task = parsePackets('CTOS', new Buffer(frame[newframes]));
+                var task = parsePackets('CTOS', new Buffer(messageFrame));
                 processIncomingTrasmission(data, socket, task);
+            })
+                
             }
             frame = [];
         });

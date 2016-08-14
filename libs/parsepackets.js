@@ -1,4 +1,11 @@
-
+/**
+ * @module {function} - YGOPro Network Message Label
+ * @description Takes a message frame, labels it.
+ * @author Jamezs "AccessDenied" L Gladney.
+ * @version 0.0.1
+ * @example 
+    var task = parsePackets('CTOS', new Buffer(messageFrame));
+ */
 /*jslint node: true */
 var enums = require('./enums.js');
 
