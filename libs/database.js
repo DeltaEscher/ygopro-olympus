@@ -1,9 +1,7 @@
 /**
+ * @module {object} - Ranking Database
  * @author Jamezs "AccessDenied" L Gladney, August 2016.
  * @version 0.0.1
- */
-
-/**
  * @example
  * var rankingDB = require('./rankingDB'),
  *     publicDB,
