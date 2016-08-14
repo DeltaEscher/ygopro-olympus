@@ -89,6 +89,68 @@ function updatePlayerTrueSkill(duelist, callback) {
     db.update(query, update, callback);
 }
 
+/**
+ * increaments a duelist wins
+ * @param {object}   duelist  [[Description]]
+ * @param {function} callback - Callback function.
+ */
+function applyWin(duelist, callback) {
+    lookup(duelist.login, function (error, doc) {
+        if (error) {
+            throw error;
+        }
+        var query = {
+                login: duelist.login
+            },
+            update = {
+                $set: {}
+            };
+        update.$set[duelist.ladder].win = doc[0][duelist.ladder].win + 1;
+        db.update(query, update, callback);
+    });
+}
+
+/**
+ * increaments a duelist losses
+ * @param {object}   duelist  [[Description]]
+ * @param {function} callback - Callback function.
+ */
+function applyLosses(duelist, callback) {
+    lookup(duelist.login, function (error, doc) {
+        if (error) {
+            throw error;
+        }
+        var query = {
+                login: duelist.login
+            },
+            update = {
+                $set: {}
+            };
+        update.$set[duelist.ladder].losses = doc[0][duelist.ladder].losses + 1;
+        db.update(query, update, callback);
+    });
+}
+
+/**
+ * increaments a duelist draws
+ * @param {object}   duelist  [[Description]]
+ * @param {function} callback - Callback function.
+ */
+function applyDraws(duelist, callback) {
+    lookup(duelist.login, function (error, doc) {
+        if (error) {
+            throw error;
+        }
+        var query = {
+                login: duelist.login
+            },
+            update = {
+                $set: {}
+            };
+        update.$set[duelist.ladder].draws = doc[0][duelist.ladder].draws + 1;
+        db.update(query, update, callback);
+    });
+}
 
 /*var = matchorsingleduel{
     players : ['name', 'name'],
@@ -155,7 +217,11 @@ function processDuel(duelResult, callback) {
     };
 
     function applySkill() {
-        var skillEngine = [];
+        var skillEngine = [],
+            winnerlist = [],
+            losserlist = [],
+            drawlist = [];
+
         duelistRecords.winners.forEach(function (duelist, sequence) {
             skillEngine.push(prepTrueSkill(duelResult.ladder, duelist, 1));
         });
@@ -163,10 +229,17 @@ function processDuel(duelResult, callback) {
             skillEngine.push(prepTrueSkill(duelResult.ladder, duelist, 2));
         });
         trueskill.AdjustPlayers(skillEngine);
-        asyncEach(skillEngine, updatePlayerTrueSkill, function () {
-            callback();
-        });
 
+        asyncEach(skillEngine, updatePlayerTrueSkill, function () {
+            asyncEach(winnerlist, applyWin, function () {
+                asyncEach(losserlist, applyLosses, function () {
+                    asyncEach(drawlist, applyDraws, function () {
+                        /* Ha Ryuuuukick! ===>*/
+                        callback(); // Google "Ryu callback, images"
+                    });
+                });
+            });
+        });
     }
 
     asyncEach(duelResult.won, lookup, function (error, contents) {
