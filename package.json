@@ -1,33 +1,37 @@
 {
-    "name": "ygopro-olympus",
-    "version": "1.0.0",
-    "description": "Ranking and Tournament system",
-    "main": "server.js",
-    "scripts": {
-        "test": "mocha test/test.js",
-        "start": "node server.js",
-        "build:docs": "jsdoc2md -f ./libs/*.js > ./documentation/libs.md"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/SalvationDevelopment/ygopro-olympus.git"
-    },
-    "author": "",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/SalvationDevelopment/ygopro-olympus/issues"
-    },
-    "homepage": "https://github.com/SalvationDevelopment/ygopro-olympus#readme",
-    "dependencies": {
-        "colors": "^1.1.2",
-        "extended-fs": "^0.3.3",
-        "mysql": "^2.11.1",
-        "nedb": "^1.8.0",
-        "primus": "^6.0.1",
-        "primus-rooms": "^3.4.1",
-        "ps-node": "^0.1.2",
-        "request": "^2.74.0",
-        "trueskill": "0.0.2",
-        "ws": "^1.1.1"
-    }
+  "name": "ygopro-olympus",
+  "version": "1.0.0",
+  "description": "Ranking and Tournament system",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha test/test.js",
+    "start": "node server.js",
+    "build:docs": "jsdoc2md -f ./libs/*.js > ./documentation/libs.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SalvationDevelopment/ygopro-olympus.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SalvationDevelopment/ygopro-olympus/issues"
+  },
+  "homepage": "https://github.com/SalvationDevelopment/ygopro-olympus#readme",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "express": "^4.14.0",
+    "extended-fs": "^0.3.3",
+    "mysql": "^2.11.1",
+    "nedb": "^1.8.0",
+    "primus": "^6.0.1",
+    "primus-rooms": "^3.4.1",
+    "ps-node": "^0.1.2",
+    "request": "^2.74.0",
+    "serve-index": "^1.8.0",
+    "toobusy-js": "^0.5.1",
+    "trueskill": "0.0.2",
+    "vhost": "^3.0.2",
+    "ws": "^1.1.1"
+  }
 }
