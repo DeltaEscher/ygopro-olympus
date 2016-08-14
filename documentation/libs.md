@@ -14,6 +14,9 @@
 <dt><a href="#module_- YGOSharp Service Manager">- YGOSharp Service Manager</a> : <code>object</code></dt>
 <dd><p>Creates and manages multi process listener for incoming YGOPro Game request, will create masters and slaves of itself.</p>
 </dd>
+<dt><a href="#module_- YGOPro Network Message Seperator">- YGOPro Network Message Seperator</a> : <code>object</code></dt>
+<dd><p>Takes stream of YGOPro network input, slices in individual messages for further processing</p>
+</dd>
 </dl>
 
 <a name="module_- Ranking Database"></a>
@@ -300,3 +303,30 @@ Initiates a number of works.
 | --- | --- | --- |
 | numCPUs | <code>number</code> | number of CPUS the host computer has. |
 
+<a name="module_- YGOPro Network Message Seperator"></a>
+
+## - YGOPro Network Message Seperator : <code>object</code>
+Takes stream of YGOPro network input, slices in individual messages for further processing
+
+**Version**: 0.0.1  
+**Author:** Jamezs "AccessDenied" L Gladney.  
+**Example**  
+```js
+var framer = new Framemaker();
+        socket.on('data', function listener(data) {
+            var frame,
+                task,
+                newframes = 0;
+            socket.heartbeat++;
+            if (socket.active_ygocore) {
+                socket.active_ygocore.write(data);
+            }
+            frame = framer.input(data);
+            for (newframes; frame.length > newframes; newframes++) {
+                //process the frames.
+                task = parsePackets('CTOS', new Buffer(frame[newframes]));
+                processIncomingTrasmission(data, socket, task);
+            }
+            frame = [];
+        });
+```
