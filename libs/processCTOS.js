@@ -1,5 +1,5 @@
 /**
- * @module {function} - YGOSharp Router, and Shell
+ * @module {function} - YGOSharp Router and Shell
  * @description This is the routing and proxy system. The System checks a number of CTOS commands and from them works out if to just route. the connection to an existing connection or start a new YGOCore. If a new YGOCore is needed it works out what config file is needed for that instance of dueling based on the `roompass` in the connection string of the `CTOS_JOIN` command.
  * @author Jamezs "AccessDenied" L Gladney.
  * @version 0.0.1
